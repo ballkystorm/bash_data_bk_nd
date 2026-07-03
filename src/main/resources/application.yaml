@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: bashdata
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bash_data_app
+    username: postgres
+    password: mubarak
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+
+
+server:
+  port: 8080
+
