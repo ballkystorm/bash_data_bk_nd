@@ -97,17 +97,6 @@ public class User extends AuditableEntity {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
-    /**
-     * Returns the user's full name.
-     *
-     * @return concatenated first and last name.
-     */
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
-
-
-
 
 
 }
