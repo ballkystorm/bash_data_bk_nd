@@ -1,25 +1,25 @@
 package com.asti.bashdata.common.validation.validator;
 
 import com.asti.bashdata.common.validation.annotation.ValidPhoneNumber;
+import com.asti.bashdata.common.validation.pattern.ValidationPatterns;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
 /**
- * Validates Nigerian phone numbers.
+ * Validates Nigerian mobile phone numbers.
  */
-public class PhoneNumberValidator
-        implements ConstraintValidator<ValidPhoneNumber, String> {
+public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumber, String> {
 
     private static final Pattern PHONE_PATTERN =
-            Pattern.compile("^(070|080|081|090|091)\\d{8}$");
+            Pattern.compile(ValidationPatterns.NIGERIAN_PHONE);
 
     @Override
     public boolean isValid(String phoneNumber,
                            ConstraintValidatorContext context) {
 
-        if (phoneNumber == null) {
+        if (phoneNumber == null || phoneNumber.isBlank()) {
             return false;
         }
 
