@@ -1,40 +1,45 @@
 package com.asti.bashdata.user.dto.request;
 
+import com.asti.bashdata.common.constants.validation.ValidationLimits;
+import com.asti.bashdata.common.constants.validation.ValidationMessages;
+import com.asti.bashdata.common.validation.annotation.ValidPassword;
+import com.asti.bashdata.common.validation.annotation.ValidPhoneNumber;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 /**
- * Represents the payload required to register a new user.
+ * Represents the request payload for user registration.
  */
 public record RegisterUserRequest(
 
-        @NotBlank(message = "First name is required.")
-        @Size(max = 50, message = "First name must not exceed 50 characters.")
+        @NotBlank(message = ValidationMessages.FIRST_NAME_REQUIRED)
+        @Size(
+                max = ValidationLimits.FIRST_NAME_MAX_LENGTH,
+                message = ValidationMessages.FIRST_NAME_MAX_LENGTH
+        )
         String firstName,
 
-        @NotBlank(message = "Last name is required.")
-        @Size(max = 50, message = "Last name must not exceed 50 characters.")
+        @NotBlank(message = ValidationMessages.LAST_NAME_REQUIRED)
+        @Size(
+                max = ValidationLimits.LAST_NAME_MAX_LENGTH,
+                message = ValidationMessages.LAST_NAME_MAX_LENGTH
+        )
         String lastName,
 
-        @NotBlank(message = "Email address is required.")
-        @Email(message = "Please provide a valid email address.")
+        @NotBlank(message = ValidationMessages.EMAIL_REQUIRED)
+        @Email(message = ValidationMessages.INVALID_EMAIL)
         String email,
 
-        @NotBlank(message = "Phone number is required.")
-        @Pattern(
-                regexp = "^\\+?[1-9]\\d{7,14}$",
-                message = "Phone number must be in international format."
-        )
+        @NotBlank(message = ValidationMessages.PHONE_REQUIRED)
+        @ValidPhoneNumber
         String phoneNumber,
 
-        @NotBlank(message = "Password is required.")
-        @Size(min = 8, max = 100,
-                message = "Password must be between 8 and 100 characters.")
+        @NotBlank(message = ValidationMessages.PASSWORD_REQUIRED)
+        @ValidPassword
         String password,
 
-        @NotBlank(message = "Confirm password is required.")
+        @NotBlank(message = ValidationMessages.CONFIRM_PASSWORD_REQUIRED)
         String confirmPassword
 
 ) {
