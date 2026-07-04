@@ -48,4 +48,12 @@ public abstract class AuditableEntity extends BaseEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    /**
+     * Returns checks if the user is deleted or not.
+     *
+     */
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
+
 }
