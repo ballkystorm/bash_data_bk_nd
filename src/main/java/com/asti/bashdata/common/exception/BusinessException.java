@@ -1,27 +1,24 @@
 package com.asti.bashdata.common.exception;
 
-import com.asti.bashdata.common.codes.BusinessCode;
+import com.asti.bashdata.common.codes.BusinessError;
 import lombok.Getter;
 
 /**
- * Base exception for all business-related errors.
- *
- * Every business exception is associated with a BusinessCode,
- * which defines the HTTP status, response code and default message.
+ * Base exception for all business-related exceptions.
  */
 @Getter
-public abstract class BusinessException extends RuntimeException {
+public class BusinessException extends RuntimeException {
 
-    private final BusinessCode businessCode;
+    private final BusinessError error;
 
-    protected BusinessException(BusinessCode businessCode) {
-        super(businessCode.getMessage());
-        this.businessCode = businessCode;
-    }
-
-    protected BusinessException(BusinessCode businessCode, String message) {
-        super(message);
-        this.businessCode = businessCode;
+    /**
+     * Creates a new business exception.
+     *
+     * @param error business error
+     */
+    public BusinessException(BusinessError error) {
+        super(error.getMessage());
+        this.error = error;
     }
 
 }
