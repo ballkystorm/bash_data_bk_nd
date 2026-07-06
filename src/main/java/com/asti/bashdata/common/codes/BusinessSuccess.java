@@ -23,31 +23,31 @@ public enum BusinessSuccess {
      */
 
     USER_REGISTERED(
-            "USR_000",
+            "USR_S001",
             "User registered successfully.",
             HttpStatus.CREATED
     ),
 
     USER_RETRIEVED(
-            "USR_001",
+            "USR_S002",
             "User retrieved successfully.",
             HttpStatus.OK
     ),
 
     USER_UPDATED(
-            "USR_002",
+            "USR_S003",
             "User updated successfully.",
             HttpStatus.OK
     ),
 
     PASSWORD_CHANGED(
-            "USR_003",
+            "USR_S004",
             "Password changed successfully.",
             HttpStatus.OK
     ),
 
     LOGIN_SUCCESSFUL(
-            "USR_004",
+            "USR_S005",
             "Login successful.",
             HttpStatus.OK
     );

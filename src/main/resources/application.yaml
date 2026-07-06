@@ -1,6 +1,7 @@
 spring:
   application:
     name: bashdata
+
   datasource:
     url: jdbc:postgresql://localhost:5432/bash_data_app
     username: postgres
@@ -8,9 +9,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
 
     show-sql: true
+
+    open-in-view: false
 
     properties:
       hibernate:
@@ -20,8 +23,8 @@ spring:
     serialization:
       INDENT_OUTPUT: true
 
-
+  flyway:
+    enabled: false
 
 server:
   port: 8080
-

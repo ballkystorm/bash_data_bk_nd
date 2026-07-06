@@ -48,6 +48,14 @@ public interface UserMapper {
             target = "fullName",
             expression = "java(user.getFirstName() + \" \" + user.getLastName())"
     )
+    @Mapping(
+            target = "emailVerified",
+            expression = "java(user.getEmailVerifiedAt() != null)"
+    )
+    @Mapping(
+            target = "phoneVerified",
+            expression = "java(user.getPhoneVerifiedAt() != null)"
+    )
     UserResponse toResponse(User user);
 
 }

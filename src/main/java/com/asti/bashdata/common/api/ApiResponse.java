@@ -1,61 +1,63 @@
 package com.asti.bashdata.common.api;
 
+import com.asti.bashdata.common.codes.BusinessSuccess;
+import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 /**
- * Standard API response returned by all REST endpoints.
+ * Standard API response returned for successful requests.
  *
- * @param <T> the type of the response payload
+ * @param <T> response payload type
  */
-@Builder
-public record ApiResponse<T>(
+@Getter
+@Builder(access = AccessLevel.PRIVATE)
+public class ApiResponse<T> {
 
-        boolean success,
+    /**
+     * Indicates whether the request was successful.
+     */
+    private final boolean success;
 
-        String message,
+    /**
+     * Business success code.
+     */
+    private final String code;
 
-        T data,
+    /**
+     * Success message.
+     */
+    private final String message;
 
-        LocalDateTime timestamp
+    /**
+     * Time the response was generated.
+     */
+    private final LocalDateTime timestamp;
 
-) {
+    /**
+     * Response payload.
+     */
+    private final T data;
 
     /**
      * Creates a successful API response.
+     *
+     * @param businessSuccess business success
+     * @param data response payload
+     * @return standardized API response
      */
-    public static <T> ApiResponse<T> success(String message, T data) {
+    public static <T> ApiResponse<T> success(
+            BusinessSuccess businessSuccess,
+            T data) {
 
         return ApiResponse.<T>builder()
                 .success(true)
-                .message(message)
+                .code(businessSuccess.getCode())
+                .message(businessSuccess.getMessage())
+                .timestamp(LocalDateTime.now())
                 .data(data)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-
-    /**
-     * Creates a successful API response without a payload.
-     */
-    public static ApiResponse<Void> success(String message) {
-
-        return ApiResponse.<Void>builder()
-                .success(true)
-                .message(message)
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
-
-    /**
-     * Creates a failed API response.
-     */
-    public static ApiResponse<Void> failure(String message) {
-
-        return ApiResponse.<Void>builder()
-                .success(false)
-                .message(message)
-                .timestamp(LocalDateTime.now())
                 .build();
     }
 
