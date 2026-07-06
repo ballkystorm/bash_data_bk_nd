@@ -1,115 +1,102 @@
 package com.asti.bashdata.common.exception;
 
+import com.asti.bashdata.common.codes.BusinessError;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Handles exceptions thrown across the application and
- * converts them into consistent API responses.
+ * Handles exceptions thrown across the application and converts them
+ * into standardized API error responses.
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(
+            BusinessException ex) {
 
-        log.warn("Resource not found: {}", ex.getMessage());
+        BusinessError error = ex.getError();
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(buildError(
-                        HttpStatus.NOT_FOUND,
-                        ex.getMessage(),
-                        null
-                ));
-    }
+        log.warn("{} : {}", error.getCode(), error.getMessage());
 
-    @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicate(DuplicateResourceException ex) {
-
-        log.warn("Duplicate resource: {}", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(buildError(
-                        HttpStatus.CONFLICT,
-                        ex.getMessage(),
-                        null
-                ));
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException ex) {
-
-        return ResponseEntity.badRequest()
-                .body(buildError(
-                        HttpStatus.BAD_REQUEST,
-                        ex.getMessage(),
-                        null
-                ));
+        return ResponseEntity
+                .status(error.getStatus())
+                .body(buildErrorResponse(error, null));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex) {
 
         Map<String, String> validationErrors = new HashMap<>();
 
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            validationErrors.put(error.getField(), error.getDefaultMessage());
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            validationErrors.put(
+                    fieldError.getField(),
+                    fieldError.getDefaultMessage()
+            );
         }
 
-        return ResponseEntity.badRequest()
-                .body(buildError(
-                        HttpStatus.BAD_REQUEST,
-                        "Validation failed.",
+        return ResponseEntity
+                .status(BusinessError.VALIDATION_FAILED.getStatus())
+                .body(buildErrorResponse(
+                        BusinessError.VALIDATION_FAILED,
                         validationErrors
                 ));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolation(
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(
             ConstraintViolationException ex) {
 
-        return ResponseEntity.badRequest()
-                .body(buildError(
-                        HttpStatus.BAD_REQUEST,
-                        ex.getMessage(),
+        log.warn("Constraint violation: {}", ex.getMessage());
+
+        return ResponseEntity
+                .status(BusinessError.VALIDATION_FAILED.getStatus())
+                .body(buildErrorResponse(
+                        BusinessError.VALIDATION_FAILED,
                         null
                 ));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
 
-        log.error("Unexpected error", ex);
+        log.error("Unexpected exception", ex);
 
-        return ResponseEntity.internalServerError()
-                .body(buildError(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        "An unexpected error occurred.",
+        return ResponseEntity
+                .status(BusinessError.INTERNAL_SERVER_ERROR.getStatus())
+                .body(buildErrorResponse(
+                        BusinessError.INTERNAL_SERVER_ERROR,
                         null
                 ));
     }
 
-    private ErrorResponse buildError(
-            HttpStatus status,
-            String message,
+    /**
+     * Builds a standardized error response.
+     *
+     * @param error business error
+     * @param validationErrors validation errors if present
+     * @return error response
+     */
+    private ErrorResponse buildErrorResponse(
+            BusinessError error,
             Map<String, String> validationErrors) {
 
         return ErrorResponse.builder()
-                .status(status.value())
-                .error(status.getReasonPhrase())
-                .message(message)
+                .status(error.getStatus().value())
+                .code(error.getCode())
+                .message(error.getMessage())
                 .timestamp(LocalDateTime.now())
                 .validationErrors(validationErrors)
                 .build();

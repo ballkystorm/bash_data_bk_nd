@@ -1,24 +1,26 @@
 package com.asti.bashdata.common.exception;
 
-
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
+/**
+ * Standard error response returned by the API.
+ */
 @Getter
 @Builder
 public class ErrorResponse {
 
-    private int status;
+    private final int status;
 
-    private String error;
+    private final String code;
 
-    private String message;
+    private final String message;
 
-    private LocalDateTime timestamp;
+    private final LocalDateTime timestamp;
 
-    private Map<String, String> validationErrors;
+    private final Map<String, String> validationErrors;
 
 }
