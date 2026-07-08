@@ -1,0 +1,21 @@
+spring:
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bash_data_app
+    username: postgres
+    password: mubarak
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+    open-in-view: false
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: false

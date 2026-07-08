@@ -2,29 +2,20 @@ spring:
   application:
     name: bashdata
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/bash_data_app
-    username: postgres
-    password: mubarak
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-
-    show-sql: true
-
-    open-in-view: false
-
-    properties:
-      hibernate:
-        format_sql: true
+  profiles:
+    active: dev
 
   jackson:
     serialization:
       INDENT_OUTPUT: true
 
-  flyway:
-    enabled: false
+application:
+  security:
+    jwt:
+      issuer: BashData
+      secret-key: BashDataDevelopmentSecretKey2026SuperSecure123456
+      access-token-expiration: 1h
+      refresh-token-expiration: 7d
 
 server:
   port: 8080

@@ -1,5 +1,7 @@
 package com.asti.bashdata.user.service.impl;
 
+import com.asti.bashdata.common.codes.BusinessError;
+import com.asti.bashdata.common.exception.BusinessException;
 import com.asti.bashdata.common.util.EmailNormalizer;
 import com.asti.bashdata.common.util.PhoneNumberNormalizer;
 import com.asti.bashdata.user.constants.UserConstants;
@@ -69,6 +71,19 @@ public class UserServiceImpl implements UserService {
         );
 
         return userMapper.toResponse(savedUser);
+
+    }
+
+    @Override
+    public User findByEmail(String email) {
+
+        return userRepository
+                .findByEmailIgnoreCaseAndDeletedAtIsNull(email)
+                .orElseThrow(() ->
+                        new BusinessException(
+                                BusinessError.USER_NOT_FOUND
+                        )
+                );
 
     }
 

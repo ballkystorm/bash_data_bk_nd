@@ -1,0 +1,17 @@
+spring:
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bash_data_test
+    username: postgres
+    password: mubarak
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+    show-sql: false
+
+    open-in-view: false
+
+  flyway:
+    enabled: false

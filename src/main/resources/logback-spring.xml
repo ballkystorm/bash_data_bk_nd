@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+    <!-- Log directory -->
+    <property name="LOG_PATH" value="logs"/>
+
+    <!-- Console log pattern -->
+    <property
+            name="CONSOLE_PATTERN"
+            value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <!-- File log pattern -->
+    <property
+            name="FILE_PATTERN"
+            value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
+
+    <!-- ========================= -->
+    <!-- Console Appender          -->
+    <!-- ========================= -->
+
+    <appender
+            name="CONSOLE"
+            class="ch.qos.logback.core.ConsoleAppender">
+
+        <encoder>
+
+            <pattern>${CONSOLE_PATTERN}</pattern>
+
+        </encoder>
+
+    </appender>
+
+    <!-- ========================= -->
+    <!-- Application Log           -->
+    <!-- ========================= -->
+
+    <appender
+            name="APPLICATION_FILE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_PATH}/application.log</file>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_PATH}/archive/application-%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+
+            <maxFileSize>10MB</maxFileSize>
+
+            <maxHistory>30</maxHistory>
+
+            <totalSizeCap>1GB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+
+            <pattern>${FILE_PATTERN}</pattern>
+
+        </encoder>
+
+    </appender>
+
+    <!-- ========================= -->
+    <!-- Error Log                 -->
+    <!-- ========================= -->
+
+    <appender
+            name="ERROR_FILE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_PATH}/error.log</file>
+
+        <filter
+                class="ch.qos.logback.classic.filter.ThresholdFilter">
+
+            <level>ERROR</level>
+
+        </filter>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_PATH}/archive/error-%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+
+            <maxFileSize>10MB</maxFileSize>
+
+            <maxHistory>60</maxHistory>
+
+        </rollingPolicy>
+
+        <encoder>
+
+            <pattern>${FILE_PATTERN}</pattern>
+
+        </encoder>
+
+    </appender>
+
+    <!-- ========================= -->
+    <!-- Root Logger               -->
+    <!-- ========================= -->
+
+    <root level="INFO">
+
+        <appender-ref ref="CONSOLE"/>
+
+        <appender-ref ref="APPLICATION_FILE"/>
+
+        <appender-ref ref="ERROR_FILE"/>
+
+    </root>
+
+</configuration>

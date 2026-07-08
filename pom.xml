@@ -165,8 +165,11 @@
 
 				<configuration>
 
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<release>${java.version}</release>
+
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
 
 					<annotationProcessorPaths>
 
