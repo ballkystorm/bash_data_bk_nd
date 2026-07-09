@@ -1,7 +1,9 @@
 package com.asti.bashdata.auth.controller;
 
+import com.asti.bashdata.auth.annotation.CurrentUser;
 import com.asti.bashdata.auth.dto.request.LoginRequest;
 import com.asti.bashdata.auth.dto.response.LoginResponse;
+import com.asti.bashdata.auth.security.SecurityUser;
 import com.asti.bashdata.auth.service.AuthService;
 import com.asti.bashdata.auth.service.CurrentUserService;
 import com.asti.bashdata.common.api.ApiResponse;
@@ -12,6 +14,7 @@ import com.asti.bashdata.user.mapper.UserMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -74,5 +77,83 @@ public class AuthController {
         );
 
     }
+
+
+
+
+
+
+
+    /**
+     * Test endpoint accessible only by administrators.
+     *
+     * @return success message
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public ResponseEntity<ApiResponse<String>> adminEndpoint() {
+
+        return ResponseEntity.ok(
+
+                ApiResponse.success(
+
+                        BusinessSuccess.USER_RETRIEVED,
+
+                        "Welcome Administrator."
+
+                )
+
+        );
+
+    }
+
+
+    /**
+     * Test endpoint accessible only by super administrators.
+     *
+     * @return success message
+     */
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @GetMapping("/super-admin")
+    public ResponseEntity<ApiResponse<String>> superAdminEndpoint() {
+
+        return ResponseEntity.ok(
+
+                ApiResponse.success(
+
+                        BusinessSuccess.USER_RETRIEVED,
+
+                        "Welcome Super Administrator."
+
+                )
+
+        );
+
+    }
+
+
+
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<UserResponse>> profile(
+
+            @CurrentUser SecurityUser securityUser
+
+    ) {
+
+        UserResponse response =
+                userMapper.toResponse(
+                        securityUser.getUser()
+                );
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        BusinessSuccess.USER_RETRIEVED,
+                        response
+                )
+        );
+
+    }
+
 
 }

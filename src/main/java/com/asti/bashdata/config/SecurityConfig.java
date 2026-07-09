@@ -1,10 +1,13 @@
 package com.asti.bashdata.config;
 
+import com.asti.bashdata.auth.handler.CustomAccessDeniedHandler;
 import com.asti.bashdata.auth.security.CustomUserDetailsService;
 import com.asti.bashdata.auth.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -42,6 +45,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http) throws Exception {
@@ -72,7 +77,11 @@ public class SecurityConfig {
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
-                );
+                )
+                .exceptionHandling(exception ->
+
+                exception.accessDeniedHandler(accessDeniedHandler)
+        );
 
         return http.build();
 
@@ -104,5 +113,40 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
 
     }
+
+
+    /**
+     * Defines the application's role hierarchy.
+     *
+     * <p>
+     * Higher roles automatically inherit the authorities
+     * of lower roles.
+     * </p>
+     *
+     * <pre>
+     * SUPER_ADMIN
+     *      ↓
+     * ADMIN
+     *      ↓
+     * AGENT
+     *      ↓
+     * USER
+     * </pre>
+     *
+     * @return configured role hierarchy
+     */
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+
+        return RoleHierarchyImpl.fromHierarchy("""
+
+            ROLE_SUPER_ADMIN > ROLE_ADMIN
+            ROLE_ADMIN > ROLE_AGENT
+            ROLE_AGENT > ROLE_USER
+
+            """);
+
+    }
+
 
 }
